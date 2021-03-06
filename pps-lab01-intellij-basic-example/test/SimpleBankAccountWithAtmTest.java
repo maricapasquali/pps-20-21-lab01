@@ -1,57 +1,38 @@
 import lab01.example.model.AccountHolder;
 import lab01.example.model.BankAccount;
-import lab01.example.model.SimpleBankAccountWithAtm;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class SimpleBankAccountWithAtmTest {
-    private AccountHolder accountHolder;
-    private BankAccount bankAccount;
+/**
+ * The test suite for testing the SimpleBankAccountWithAtmTest implementation
+ */
+class SimpleBankAccountWithAtmTest extends BaseSimpleBankAccountTest {
 
-    @BeforeEach
-    void beforeEach() {
-        accountHolder = new AccountHolder("Anna", "Verdi", 1321);
-        bankAccount = new SimpleBankAccountWithAtm(accountHolder, 0);
+    @Override
+    public BankAccount getBankAccount() {
+        return BankAccount.newSimpleBankAccountWithAtm(new AccountHolder("Anna", "Verdi", 1321));
     }
 
-    @Test
-    void testInitialBalance() {
-        assertEquals(0, bankAccount.getBalance());
+    @Override
+    public double getDepositAmount() {
+        return 100;
     }
 
-    @Test
-    void testDeposit() {
-        bankAccount.deposit(accountHolder.getId(), 100);
-        assertEquals(99, bankAccount.getBalance());
+    @Override
+    public double getWithdrawAmount() {
+        return 70;
     }
 
-    @Test
-    void testWrongDeposit() {
-        bankAccount.deposit(accountHolder.getId(), 100);
-        bankAccount.deposit(2, 50);
-        assertEquals(99, bankAccount.getBalance());
-    }
-
-    @Test
-    void testWithdraw() {
-        bankAccount.deposit(accountHolder.getId(), 100);
-        bankAccount.withdraw(accountHolder.getId(), 70);
-        assertEquals(28, bankAccount.getBalance());
-    }
-
-    @Test
-    void testWrongWithdraw() {
-        bankAccount.deposit(accountHolder.getId(), 100);
-        bankAccount.withdraw(2, 70);
-        assertEquals(99, bankAccount.getBalance());
+    @Override
+    public double getExpectedAmount(final boolean isAndSucceedWithdraw) {
+        return isAndSucceedWithdraw ? 28 : 99;
     }
 
     @Test
     void testWithdrawMoreAmount() {
-        bankAccount.deposit(accountHolder.getId(), 100);
-        bankAccount.withdraw(accountHolder.getId(), 150);
-        assertEquals(99, bankAccount.getBalance());
+        super.bankAccount.deposit(super.accountHolder.getId(), 100);
+        super.bankAccount.withdraw(super.accountHolder.getId(), 150);
+        assertEquals(getExpectedAmount(false), super.bankAccount.getBalance());
     }
 }
