@@ -1,5 +1,4 @@
-import lab01.tdd.CircularList;
-import lab01.tdd.CircularListImpl;
+import lab01.tdd.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +11,8 @@ import java.util.Optional;
 public class CircularListTest {
 
     private CircularList circularList;
+
+    private SelectStrategy strategy;
 
     @BeforeEach
     void setUp() {
@@ -102,5 +103,54 @@ public class CircularListTest {
         Assertions.assertEquals(Optional.of(40), circularList.next());
         circularList.reset();
         Assertions.assertEquals(Optional.of(20), circularList.next());
+    }
+
+    @Test
+    void testNextSelectStrategy() {
+        circularList.add(200);
+        circularList.add(2);
+        circularList.add(5);
+        circularList.add(33);
+
+        strategy = new EvenStrategy();
+        Assertions.assertEquals(Optional.of(200), circularList.next(strategy));
+
+        strategy = new MultipleOfStrategy(3);
+        circularList.next();
+        circularList.next();
+        Assertions.assertEquals(Optional.of(33), circularList.next(strategy));
+
+        strategy = new EqualsStrategy(2);
+        circularList.next();
+        Assertions.assertEquals(Optional.of(2), circularList.next(strategy));
+
+        circularList.reset();
+
+        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
+        Assertions.assertEquals(Optional.of(2), circularList.next(strategy));
+        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
+        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
+        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
+    }
+
+    @Test
+    void testNoSatisfyNextSelectStrategy() {
+        circularList.add(200);
+        circularList.add(2);
+        circularList.add(5);
+        circularList.add(33);
+
+        strategy = new EvenStrategy();
+        circularList.next();
+        circularList.next();
+        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
+
+        strategy = new MultipleOfStrategy(3);
+        circularList.previous();
+        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
+
+        strategy = new EqualsStrategy(2);
+        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
+
     }
 }
