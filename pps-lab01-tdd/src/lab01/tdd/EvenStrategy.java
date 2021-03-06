@@ -3,10 +3,9 @@ package lab01.tdd;
 /**
  * Represent a select Strategy to get the next even element.
  */
-public class EvenStrategy implements SelectStrategy {
+public class EvenStrategy extends MultipleOfStrategy {
 
-    @Override
-    public boolean apply(int element) {
-        return element % 2 == 0;
+    public EvenStrategy() {
+        super(2);
     }
 }

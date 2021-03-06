@@ -10,6 +10,21 @@ import java.util.Optional;
  */
 public class CircularListTest {
 
+    private static final int NO_ELEMENT = 0;
+    private static final int ONE_ELEMENT = 1;
+
+    private static final int NUMBER_1 = 20;
+    private static final int NUMBER_2 = 40;
+    private static final int NUMBER_3 = 2;
+
+    private static final int STRATEGY_NUMBER_1 = 200;
+    private static final int STRATEGY_NUMBER_2 = NUMBER_3;
+    private static final int STRATEGY_NUMBER_3 = 5;
+    private static final int STRATEGY_NUMBER_4 = 33;
+
+    private static final int EQUALS_STRATEGY_NUMBER = STRATEGY_NUMBER_2;
+    private static final int MULTIPLE_STRATEGY_NUMBER = 3;
+
     private CircularList circularList;
 
     private SelectStrategy strategy;
@@ -20,14 +35,8 @@ public class CircularListTest {
     }
 
     @Test
-    void testAdd() {
-        circularList.add(20);
-        Assertions.assertEquals(Optional.of(20), circularList.next());
-    }
-
-    @Test
     void testSize() {
-        Assertions.assertEquals(0, circularList.size());
+        Assertions.assertEquals(NO_ELEMENT, circularList.size());
     }
 
     @Test
@@ -36,32 +45,46 @@ public class CircularListTest {
     }
 
     @Test
+    void testAdd() {
+        circularList.add(NUMBER_1);
+        Assertions.assertEquals(ONE_ELEMENT, circularList.size());
+    }
+
+    @Test
+    void testNext() {
+        addSomeElement();
+
+        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.next());
+        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.next());
+        Assertions.assertEquals(Optional.of(NUMBER_3), circularList.next());
+    }
+
+    @Test
     void testNextIfEmpty() {
         Assertions.assertEquals(Optional.empty(), circularList.next());
     }
 
     @Test
-    void testNext() {
-        circularList.add(20);
-        circularList.add(40);
-        circularList.add(2);
-        Assertions.assertEquals(Optional.of(20), circularList.next());
-        Assertions.assertEquals(Optional.of(40), circularList.next());
-        Assertions.assertEquals(Optional.of(2), circularList.next());
+    void testNextOnLast() {
+        addSomeElement();
+
+        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.next());
+        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.next());
+        Assertions.assertEquals(Optional.of(NUMBER_3), circularList.next());
+
+        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.next());
+        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.next());
     }
 
     @Test
-    void testNextOnLast() {
-        circularList.add(20);
-        circularList.add(40);
-        circularList.add(2);
+    void testPrevious() {
+        addSomeElement();
 
-        Assertions.assertEquals(Optional.of(20), circularList.next());
-        Assertions.assertEquals(Optional.of(40), circularList.next());
-        Assertions.assertEquals(Optional.of(2), circularList.next());
+        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.next());
+        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.next());
 
-        Assertions.assertEquals(Optional.of(20), circularList.next());
-        Assertions.assertEquals(Optional.of(40), circularList.next());
+        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.previous());
+        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.previous());
     }
 
     @Test
@@ -70,64 +93,46 @@ public class CircularListTest {
     }
 
     @Test
-    void testPrevious() {
-        circularList.add(20);
-        circularList.add(40);
-        circularList.add(2);
-        Assertions.assertEquals(Optional.of(20), circularList.next());
-        Assertions.assertEquals(Optional.of(40), circularList.next());
-
-        Assertions.assertEquals(Optional.of(40), circularList.previous());
-        Assertions.assertEquals(Optional.of(20), circularList.previous());
-    }
-
-    @Test
     void testPreviousOnFirst() {
-        circularList.add(20);
-        circularList.add(40);
-        circularList.add(2);
-        Assertions.assertEquals(Optional.of(2), circularList.previous());
-        Assertions.assertEquals(Optional.of(40), circularList.previous());
-        Assertions.assertEquals(Optional.of(20), circularList.previous());
+        addSomeElement();
 
-        Assertions.assertEquals(Optional.of(2), circularList.previous());
+        Assertions.assertEquals(Optional.of(NUMBER_3), circularList.previous());
+        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.previous());
+        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.previous());
+
+        Assertions.assertEquals(Optional.of(NUMBER_3), circularList.previous());
     }
 
     @Test
     void testReset() {
-        circularList.add(20);
-        circularList.add(40);
-        circularList.add(2);
+        addSomeElement();
 
-        Assertions.assertEquals(Optional.of(20), circularList.next());
-        Assertions.assertEquals(Optional.of(40), circularList.next());
+        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.next());
+        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.next());
         circularList.reset();
-        Assertions.assertEquals(Optional.of(20), circularList.next());
+        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.next());
     }
 
     @Test
     void testNextSelectStrategy() {
-        circularList.add(200);
-        circularList.add(2);
-        circularList.add(5);
-        circularList.add(33);
+        addSomeElementWithStrategy();
 
         strategy = new EvenStrategy();
-        Assertions.assertEquals(Optional.of(200), circularList.next(strategy));
+        Assertions.assertEquals(Optional.of(STRATEGY_NUMBER_1), circularList.next(strategy));
 
-        strategy = new MultipleOfStrategy(3);
+        strategy = new MultipleOfStrategy(MULTIPLE_STRATEGY_NUMBER);
         circularList.next();
         circularList.next();
-        Assertions.assertEquals(Optional.of(33), circularList.next(strategy));
+        Assertions.assertEquals(Optional.of(STRATEGY_NUMBER_4), circularList.next(strategy));
 
-        strategy = new EqualsStrategy(2);
+        strategy = new EqualsStrategy(EQUALS_STRATEGY_NUMBER);
         circularList.next();
-        Assertions.assertEquals(Optional.of(2), circularList.next(strategy));
+        Assertions.assertEquals(Optional.of(STRATEGY_NUMBER_2), circularList.next(strategy));
 
         circularList.reset();
 
         Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
-        Assertions.assertEquals(Optional.of(2), circularList.next(strategy));
+        Assertions.assertEquals(Optional.of(STRATEGY_NUMBER_2), circularList.next(strategy));
         Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
         Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
         Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
@@ -135,22 +140,32 @@ public class CircularListTest {
 
     @Test
     void testNoSatisfyNextSelectStrategy() {
-        circularList.add(200);
-        circularList.add(2);
-        circularList.add(5);
-        circularList.add(33);
+        addSomeElementWithStrategy();
 
         strategy = new EvenStrategy();
         circularList.next();
         circularList.next();
         Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
 
-        strategy = new MultipleOfStrategy(3);
+        strategy = new MultipleOfStrategy(MULTIPLE_STRATEGY_NUMBER);
         circularList.previous();
         Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
 
-        strategy = new EqualsStrategy(2);
+        strategy = new EqualsStrategy(EQUALS_STRATEGY_NUMBER);
         Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
 
+    }
+
+    private void addSomeElement() {
+        circularList.add(NUMBER_1);
+        circularList.add(NUMBER_2);
+        circularList.add(NUMBER_3);
+    }
+
+    private void addSomeElementWithStrategy() {
+        circularList.add(STRATEGY_NUMBER_1);
+        circularList.add(STRATEGY_NUMBER_2);
+        circularList.add(STRATEGY_NUMBER_3);
+        circularList.add(STRATEGY_NUMBER_4);
     }
 }
