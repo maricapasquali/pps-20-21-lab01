@@ -27,11 +27,12 @@ public class CircularListTest {
 
     private CircularList circularList;
 
-    private SelectStrategy strategy;
+    private FactorySelectStrategy factorySelectStrategy;
 
     @BeforeEach
     void setUp() {
         circularList = new CircularListImpl();
+        factorySelectStrategy = new FactorySelectStrategyImpl();
     }
 
     @Test
@@ -117,15 +118,15 @@ public class CircularListTest {
     void testNextSelectStrategy() {
         addSomeElementWithStrategy();
 
-        strategy = new EvenStrategy();
+        SelectStrategy strategy = factorySelectStrategy.newEvenStrategy();
         Assertions.assertEquals(Optional.of(STRATEGY_NUMBER_1), circularList.next(strategy));
 
-        strategy = new MultipleOfStrategy(MULTIPLE_STRATEGY_NUMBER);
+        strategy = factorySelectStrategy.newMultipleOfStrategy(MULTIPLE_STRATEGY_NUMBER);
         circularList.next();
         circularList.next();
         Assertions.assertEquals(Optional.of(STRATEGY_NUMBER_4), circularList.next(strategy));
 
-        strategy = new EqualsStrategy(EQUALS_STRATEGY_NUMBER);
+        strategy = factorySelectStrategy.newEqualsStrategy(EQUALS_STRATEGY_NUMBER);
         circularList.next();
         Assertions.assertEquals(Optional.of(STRATEGY_NUMBER_2), circularList.next(strategy));
 
@@ -142,16 +143,16 @@ public class CircularListTest {
     void testNoSatisfyNextSelectStrategy() {
         addSomeElementWithStrategy();
 
-        strategy = new EvenStrategy();
+        SelectStrategy strategy = factorySelectStrategy.newEvenStrategy();
         circularList.next();
         circularList.next();
         Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
 
-        strategy = new MultipleOfStrategy(MULTIPLE_STRATEGY_NUMBER);
+        strategy = factorySelectStrategy.newMultipleOfStrategy(MULTIPLE_STRATEGY_NUMBER);
         circularList.previous();
         Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
 
-        strategy = new EqualsStrategy(EQUALS_STRATEGY_NUMBER);
+        strategy = factorySelectStrategy.newEqualsStrategy(EQUALS_STRATEGY_NUMBER);
         Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
 
     }

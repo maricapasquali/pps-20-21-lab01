@@ -3,7 +3,7 @@ package lab01.tdd;
 /**
  * Represent a select Strategy to get the next equal element of a given one.
  */
-public class EqualsStrategy implements SelectStrategy {
+class EqualsStrategy implements SelectStrategy {
 
     private final int value;
 

@@ -3,7 +3,7 @@ package lab01.tdd;
 /**
  * Represent a select Strategy to get the next multiple of a given number.
  */
-public class MultipleOfStrategy extends EqualsStrategy {
+class MultipleOfStrategy extends EqualsStrategy {
 
     private final int multipleOf;
 
