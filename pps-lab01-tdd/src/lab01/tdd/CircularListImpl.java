@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class CircularListImpl implements CircularList {
 
@@ -33,27 +34,23 @@ public class CircularListImpl implements CircularList {
 
     @Override
     public Optional<Integer> next() {
-        if (this.iterator.hasNext()) {
-            return Optional.of(this.iterator.next());
-        } else if (this.size() > 0) {
-            this.iterator = circularList.listIterator();
-            return Optional.of(this.iterator.next());
-        } else {
-            return Optional.empty();
-        }
+        return move(()-> this.iterator.hasNext(),
+                    ()-> this.iterator.next(),
+                    ()-> {
+                        this.iterator = circularList.listIterator();
+                        return this.iterator.next();
+                    });
     }
 
     @Override
     public Optional<Integer> previous() {
-        if (this.iterator.hasPrevious()) {
-            return Optional.of(this.iterator.previous());
-        } else if (this.size() > 0) {
-            var lastIndex = this.size() - 1;
-            this.iterator = circularList.listIterator(lastIndex);
-            return Optional.of(this.circularList.get(lastIndex));
-        } else {
-            return Optional.empty();
-        }
+        return move(()-> this.iterator.hasPrevious(),
+                    ()-> this.iterator.previous(),
+                    ()-> {
+                        var lastIndex = this.size() - 1;
+                        this.iterator = circularList.listIterator(lastIndex);
+                        return this.circularList.get(lastIndex);
+                    });
     }
 
     @Override
@@ -65,5 +62,15 @@ public class CircularListImpl implements CircularList {
     public Optional<Integer> next(SelectStrategy strategy) {
         var element = this.next();
         return element.isPresent() && strategy.apply(element.get()) ? element : Optional.empty();
+    }
+
+    private Optional<Integer> move(final Supplier<Boolean> hasMove, final Supplier<Integer> move, final Supplier<Integer> circularMove){
+        if (hasMove.get()) {
+            return Optional.of(move.get());
+        } else if (this.size() > 0) {
+            return Optional.of(circularMove.get());
+        } else {
+            return Optional.empty();
+        }
     }
 }
