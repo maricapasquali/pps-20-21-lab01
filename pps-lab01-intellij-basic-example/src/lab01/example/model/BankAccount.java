@@ -34,21 +34,4 @@ public interface BankAccount {
      * @param amount the amount of the withdraw
      */
     void withdraw(int usrID, double amount);
-
-
-    static BankAccount newSimpleBankAccount(final AccountHolder accountHolder){
-        return newSimpleBankAccount(accountHolder, 0);
-    }
-
-    static BankAccount newSimpleBankAccount(final AccountHolder accountHolder, double balance){
-        return new SimpleBankAccount(accountHolder, balance);
-    }
-
-    static BankAccount newSimpleBankAccountWithAtm(final AccountHolder accountHolder){
-        return newSimpleBankAccountWithAtm(accountHolder, 0);
-    }
-
-    static BankAccount newSimpleBankAccountWithAtm(final AccountHolder accountHolder, double balance){
-        return new SimpleBankAccountWithAtm(accountHolder, balance);
-    }
 }

@@ -1,5 +1,8 @@
 import lab01.example.model.AccountHolder;
 import lab01.example.model.BankAccount;
+import lab01.example.model.BankAccountFactory;
+import lab01.example.model.BankAccountFactoryImpl;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +14,7 @@ abstract class BaseSimpleBankAccountTest {
     protected double wrongAmount = 50;
     protected int wrongId = -1;
 
+    protected static BankAccountFactory bankAccountFactory;
     protected AccountHolder accountHolder;
     protected BankAccount bankAccount;
 
@@ -21,6 +25,11 @@ abstract class BaseSimpleBankAccountTest {
     protected abstract double getWithdrawAmount();
 
     protected abstract double getExpectedAmount(final boolean isAndSucceedWithdraw);
+
+    @BeforeAll
+    static void beforeAll() {
+        bankAccountFactory = new BankAccountFactoryImpl();
+    }
 
     @BeforeEach
     void beforeEach() {

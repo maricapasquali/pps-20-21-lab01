@@ -11,7 +11,7 @@ class SimpleBankAccountWithAtmTest extends BaseSimpleBankAccountTest {
 
     @Override
     public BankAccount getBankAccount() {
-        return BankAccount.newSimpleBankAccountWithAtm(new AccountHolder("Anna", "Verdi", 1321));
+        return bankAccountFactory.newSimpleBankAccountWithAtm(new AccountHolder("Anna", "Verdi", 1321));
     }
 
     @Override

@@ -8,7 +8,7 @@ class SimpleBankAccountTest extends BaseSimpleBankAccountTest {
 
     @Override
     public BankAccount getBankAccount() {
-        return BankAccount.newSimpleBankAccount(new AccountHolder("Mario", "Rossi", 1));
+        return bankAccountFactory.newSimpleBankAccount(new AccountHolder("Mario", "Rossi", 1));
     }
 
     @Override

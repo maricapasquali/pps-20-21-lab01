@@ -2,12 +2,15 @@ package lab01.example;
 
 import lab01.example.model.AccountHolder;
 import lab01.example.model.BankAccount;
+import lab01.example.model.BankAccountFactory;
+import lab01.example.model.BankAccountFactoryImpl;
 
 public class Main {
 
     public static void main(String[] args) {
         final AccountHolder accountHolder = new AccountHolder("Mario", "Rossi", 1);
-        final BankAccount bankAccount = BankAccount.newSimpleBankAccount(accountHolder);
+        final BankAccountFactory factory = new BankAccountFactoryImpl();
+        final BankAccount bankAccount = factory.newSimpleBankAccount(accountHolder);
 
         bankAccount.deposit(accountHolder.getId(), 100);
 
