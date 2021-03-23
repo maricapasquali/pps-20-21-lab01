@@ -61,7 +61,8 @@ public class CircularListImpl implements CircularList {
     @Override
     public Optional<Integer> next(SelectStrategy strategy) {
         var element = this.next();
-        return element.isPresent() && strategy.apply(element.get()) ? element : Optional.empty();
+        return element.isPresent() && strategy.apply(element.get()) ? element :
+               (circularList.stream().anyMatch(strategy::apply) ? next(strategy) : Optional.empty());
     }
 
     private Optional<Integer> move(final Supplier<Boolean> hasMove, final Supplier<Integer> move, final Supplier<Integer> circularMove){

@@ -1,9 +1,11 @@
 import lab01.tdd.*;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The test suite for testing the CircularList implementation
@@ -37,123 +39,136 @@ public class CircularListTest {
 
     @Test
     void testSize() {
-        Assertions.assertEquals(NO_ELEMENT, circularList.size());
+        assertEquals(NO_ELEMENT, circularList.size());
     }
 
     @Test
     void testIsEmpty() {
-        Assertions.assertTrue(circularList.isEmpty());
+        assertTrue(circularList.isEmpty());
     }
 
     @Test
     void testAdd() {
         circularList.add(NUMBER_1);
-        Assertions.assertEquals(ONE_ELEMENT, circularList.size());
+        assertEquals(ONE_ELEMENT, circularList.size());
     }
 
     @Test
     void testNext() {
         addSomeElement();
 
-        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.next());
-        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.next());
-        Assertions.assertEquals(Optional.of(NUMBER_3), circularList.next());
+        assertEquals(Optional.of(NUMBER_1), circularList.next());
+        assertEquals(Optional.of(NUMBER_2), circularList.next());
+        assertEquals(Optional.of(NUMBER_3), circularList.next());
     }
 
     @Test
     void testNextIfEmpty() {
-        Assertions.assertEquals(Optional.empty(), circularList.next());
+        assertEquals(Optional.empty(), circularList.next());
     }
 
     @Test
     void testNextOnLast() {
         addSomeElement();
 
-        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.next());
-        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.next());
-        Assertions.assertEquals(Optional.of(NUMBER_3), circularList.next());
+        assertEquals(Optional.of(NUMBER_1), circularList.next());
+        assertEquals(Optional.of(NUMBER_2), circularList.next());
+        assertEquals(Optional.of(NUMBER_3), circularList.next());
 
-        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.next());
-        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.next());
+        assertEquals(Optional.of(NUMBER_1), circularList.next());
+        assertEquals(Optional.of(NUMBER_2), circularList.next());
     }
 
     @Test
     void testPrevious() {
         addSomeElement();
 
-        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.next());
-        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.next());
+        assertEquals(Optional.of(NUMBER_1), circularList.next());
+        assertEquals(Optional.of(NUMBER_2), circularList.next());
 
-        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.previous());
-        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.previous());
+        assertEquals(Optional.of(NUMBER_2), circularList.previous());
+        assertEquals(Optional.of(NUMBER_1), circularList.previous());
     }
 
     @Test
     void testPreviousIfEmpty() {
-        Assertions.assertEquals(Optional.empty(), circularList.previous());
+        assertEquals(Optional.empty(), circularList.previous());
     }
 
     @Test
     void testPreviousOnFirst() {
         addSomeElement();
 
-        Assertions.assertEquals(Optional.of(NUMBER_3), circularList.previous());
-        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.previous());
-        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.previous());
+        assertEquals(Optional.of(NUMBER_3), circularList.previous());
+        assertEquals(Optional.of(NUMBER_2), circularList.previous());
+        assertEquals(Optional.of(NUMBER_1), circularList.previous());
 
-        Assertions.assertEquals(Optional.of(NUMBER_3), circularList.previous());
+        assertEquals(Optional.of(NUMBER_3), circularList.previous());
     }
 
     @Test
     void testReset() {
         addSomeElement();
 
-        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.next());
-        Assertions.assertEquals(Optional.of(NUMBER_2), circularList.next());
+        assertEquals(Optional.of(NUMBER_1), circularList.next());
+        assertEquals(Optional.of(NUMBER_2), circularList.next());
         circularList.reset();
-        Assertions.assertEquals(Optional.of(NUMBER_1), circularList.next());
+        assertEquals(Optional.of(NUMBER_1), circularList.next());
     }
 
     @Test
-    void testNextSelectStrategy() {
+    void testNextEvenStrategy() {
         addSomeElementWithStrategy();
 
-        SelectStrategy strategy = factorySelectStrategy.newEvenStrategy();
-        Assertions.assertEquals(Optional.of(STRATEGY_NUMBER_1), circularList.next(strategy));
+        var strategy = factorySelectStrategy.newEvenStrategy();
+        assertEquals(Optional.of(STRATEGY_NUMBER_1), circularList.next(strategy));
+        assertEquals(Optional.of(STRATEGY_NUMBER_2), circularList.next(strategy));
+        assertEquals(Optional.of(STRATEGY_NUMBER_1), circularList.next(strategy));
+        assertEquals(Optional.of(STRATEGY_NUMBER_2), circularList.next(strategy));
+        assertEquals(Optional.of(STRATEGY_NUMBER_3), circularList.next());
+        assertEquals(Optional.of(STRATEGY_NUMBER_1), circularList.next(strategy));
 
-        strategy = factorySelectStrategy.newMultipleOfStrategy(MULTIPLE_STRATEGY_NUMBER);
-        circularList.next();
-        circularList.next();
-        Assertions.assertEquals(Optional.of(STRATEGY_NUMBER_4), circularList.next(strategy));
+    }
 
-        strategy = factorySelectStrategy.newEqualsStrategy(EQUALS_STRATEGY_NUMBER);
-        circularList.next();
-        Assertions.assertEquals(Optional.of(STRATEGY_NUMBER_2), circularList.next(strategy));
+    @Test
+    void testNextMultipleOfStrategy() {
+        addSomeElementWithStrategy();
 
-        circularList.reset();
+        var strategy = factorySelectStrategy.newMultipleOfStrategy(MULTIPLE_STRATEGY_NUMBER);
+        assertEquals(Optional.of(STRATEGY_NUMBER_4), circularList.next(strategy));
+        assertEquals(Optional.of(STRATEGY_NUMBER_4), circularList.next(strategy));
+        assertEquals(Optional.of(STRATEGY_NUMBER_4), circularList.next(strategy));
+        assertEquals(Optional.of(STRATEGY_NUMBER_1), circularList.next());
+        assertEquals(Optional.of(STRATEGY_NUMBER_4), circularList.next(strategy));
 
-        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
-        Assertions.assertEquals(Optional.of(STRATEGY_NUMBER_2), circularList.next(strategy));
-        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
-        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
-        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
+    }
+
+    @Test
+    void testNextEqualsStrategy() {
+        addSomeElementWithStrategy();
+
+        var strategy =  factorySelectStrategy.newEqualsStrategy(EQUALS_STRATEGY_NUMBER);
+        assertEquals(Optional.of(STRATEGY_NUMBER_2), circularList.next(strategy));
+        assertEquals(Optional.of(STRATEGY_NUMBER_2), circularList.next(strategy));
+        assertEquals(Optional.of(STRATEGY_NUMBER_3), circularList.next());
+        assertEquals(Optional.of(STRATEGY_NUMBER_2), circularList.next(strategy));
+
     }
 
     @Test
     void testNoSatisfyNextSelectStrategy() {
-        addSomeElementWithStrategy();
+        circularList.add(STRATEGY_NUMBER_3);
+        circularList.add(STRATEGY_NUMBER_3);
+        circularList.add(STRATEGY_NUMBER_4);
 
-        SelectStrategy strategy = factorySelectStrategy.newEvenStrategy();
-        circularList.next();
-        circularList.next();
-        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
+        var strategy = factorySelectStrategy.newEvenStrategy();
+        assertEquals(Optional.empty(), circularList.next(strategy));
 
-        strategy = factorySelectStrategy.newMultipleOfStrategy(MULTIPLE_STRATEGY_NUMBER);
-        circularList.previous();
-        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
+        strategy = factorySelectStrategy.newMultipleOfStrategy(NUMBER_2);
+        assertEquals(Optional.empty(), circularList.next(strategy));
 
         strategy = factorySelectStrategy.newEqualsStrategy(EQUALS_STRATEGY_NUMBER);
-        Assertions.assertEquals(Optional.empty(), circularList.next(strategy));
+        assertEquals(Optional.empty(), circularList.next(strategy));
 
     }
 
