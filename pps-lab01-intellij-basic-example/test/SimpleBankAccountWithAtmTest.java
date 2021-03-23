@@ -1,5 +1,6 @@
 import lab01.example.model.AccountHolder;
 import lab01.example.model.BankAccount;
+import lab01.example.model.BankAccountATM;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,6 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class SimpleBankAccountWithAtmTest extends BaseSimpleBankAccountTest {
 
+    private static final double AMOUNT1 = 100;
+    private static final double AMOUNT2 = 70;
+    private static final double AMOUNT3 = 99;
+
     @Override
     public BankAccount getBankAccount() {
         return bankAccountFactory.newSimpleBankAccountWithAtm(new AccountHolder("Anna", "Verdi", 1321));
@@ -16,23 +21,36 @@ class SimpleBankAccountWithAtmTest extends BaseSimpleBankAccountTest {
 
     @Override
     public double getDepositAmount() {
-        return 100;
+        return AMOUNT1;
     }
 
     @Override
     public double getWithdrawAmount() {
-        return 70;
+        return AMOUNT2;
     }
 
     @Override
     public double getExpectedAmount(final boolean isAndSucceedWithdraw) {
-        return isAndSucceedWithdraw ? 28 : 99;
+        return isAndSucceedWithdraw ? 30 : AMOUNT1;
     }
 
     @Test
-    void testWithdrawMoreAmount() {
-        super.bankAccount.deposit(super.accountHolder.getId(), 100);
-        super.bankAccount.withdraw(super.accountHolder.getId(), 150);
-        assertEquals(getExpectedAmount(false), super.bankAccount.getBalance());
+    void testWithdrawATMMoreAmount() {
+        ((BankAccountATM)super.bankAccount).depositWithATM(super.accountHolder.getId(), AMOUNT1);
+        ((BankAccountATM)super.bankAccount).withdrawWithATM(super.accountHolder.getId(), AMOUNT1+AMOUNT2);
+        assertEquals(AMOUNT3, super.bankAccount.getBalance());
+    }
+
+    @Test
+    void testWithdrawATMEqualsBalance() {
+        ((BankAccountATM)super.bankAccount).depositWithATM(super.accountHolder.getId(), AMOUNT1);
+        ((BankAccountATM)super.bankAccount).withdrawWithATM(super.accountHolder.getId(), AMOUNT1);
+        assertEquals(AMOUNT3, super.bankAccount.getBalance());
+    }
+
+    @Test
+    void testDepositATMLessThanFee() {
+        ((BankAccountATM)super.bankAccount).depositWithATM(super.accountHolder.getId(), 0.5);
+        assertEquals(0, super.bankAccount.getBalance());
     }
 }
